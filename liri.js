@@ -1,6 +1,7 @@
 //Include axios npm package
 const axios = require('axios');
 const moment = require('moment');
+const fs = require('fs');
 
 //Read and Set Environment variables
 require("dotenv").config();
@@ -14,38 +15,42 @@ const keys = require("./keys.js");
 const divider = "\n------------------------------------------------------------------------------------\n";
 
 //Get parameters and store it in a variable
-const command = process.argv[2];
-const search = process.argv[3];
+let command = process.argv[2];
+let search = process.argv[3];
 
 console.log(`Action: ${command}`);
 console.log(`Search: ${search}`);
 
-switch(command) {
-    case 'concert-this':
-        let artist = search;
-        if(artist === undefined) {
-            artist = "Ace of Base"
-        }
-        searchConcert(artist);
-        break;
+processCommand();
 
-    case 'spotify-this-song':
-        console.log("Search Song");
-        searchSong(search);
-        break;
+function processCommand() {
+    switch(command) {
+        case 'concert-this':
+            let artist = search;
+            if(artist === undefined) {
+                artist = "Ace of Base"
+            }
+            searchConcert(artist);
+            break;
 
-    case 'movie-this':
-        let movie = search;
-        if(movie === undefined) {
-            movie = "Mr. Nobody"
-        }
-        searchMovie(movie);
-        break;
+        case 'spotify-this-song':
+            console.log("Search Song");
+            searchSong(search);
+            break;
 
-    case 'do-what-it-says':
-        console.log("Search File");
-        searchFile(search);
-        break;
+        case 'movie-this':
+            let movie = search;
+            if(movie === undefined) {
+                movie = "Mr. Nobody"
+            }
+            searchMovie(movie);
+            break;
+
+        case 'do-what-it-says':
+            console.log("Execute File");
+            executeFile();
+            break;
+    }
 }
 
 function searchConcert(artist) {
@@ -114,4 +119,23 @@ function searchMovie(movie) {
         .catch(function(error) {
             console.log(error);
         })
+}
+
+function executeFile() {
+    //spotify-this-song,"I Want it That Way"
+    fs.readFile('random.txt', 'utf8', function (err, data) {
+        if (err) return console.log(err);
+
+        const lines = data.trim().split('\n');
+        console.log(lines);
+        
+        for(const line of lines) {
+            let result = line.split(',')
+            command = result[0];
+            search = result[1];
+            console.log(command);
+            console.log(search);
+            processCommand();
+        }
+    });
 }
