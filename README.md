@@ -24,7 +24,7 @@ _node liri.js movie-this 'movie name here'_
 ### Read from File
 Don't want to type in single commands? Add a list of commands in the random.txt file and execute this command below to run the entire file.
 
-node liri.js do-what-it-says
+_node liri.js do-what-it-says_
 
 ### Where to get help
 The GIF below will show you how to execute the commands and the results that will be returned.
