@@ -2,6 +2,7 @@
 const axios = require('axios');
 const moment = require('moment');
 const fs = require('fs');
+const Spotify = require('node-spotify-api');
 
 //Read and Set Environment variables
 require("dotenv").config();
@@ -10,7 +11,7 @@ require("dotenv").config();
 const keys = require("./keys.js");
 
 //Access Spotify keys
-//var spotify = new Spotify(keys.spotify);
+var spotify = new Spotify(keys.spotify);
 
 const divider = "\n------------------------------------------------------------------------------------\n";
 
@@ -34,7 +35,6 @@ function processCommand() {
             break;
 
         case 'spotify-this-song':
-            console.log("Search Song");
             let song = search;
             if(song === undefined) {
                 song = "The Sign"
@@ -80,6 +80,39 @@ function searchConcert(artist) {
         .catch(function(error) {
             console.log(error);
         })
+}
+
+function searchSong(song) {
+    let combinedSong = song.replace(/['"]+/g, '').split(' ').join('+');
+
+    spotify
+        .search({ type: 'track', query: combinedSong })
+        .then(function(response) {
+            let showData = "";
+            for (const song of response.tracks.items) {
+                let artists = "";
+
+                //Artists is an array of objects
+                if (song.artists && song.artists.length > 0) {
+                    song.artists.find(function(artist) {
+                        artists += artist.name + ", "
+                    });
+                }
+
+                showData += [
+                    "Artist(s): " + artists.replace(/,\s*$/, ''),
+                    "Name of Song: " + song.name,
+                    "Spotify Song Preview: " + (song.preview_url === null ? "" : song.preview_url),
+                    "Album Name: " +  (song.album === null ? "" : song.album.name),
+                    divider
+                ].join("\n\n");
+            }
+            
+            console.log(showData);
+        })
+        .catch(function(err) {
+            console.log(err);
+        });
 }
 
 function searchMovie(movie) {
