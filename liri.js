@@ -35,7 +35,11 @@ function processCommand() {
 
         case 'spotify-this-song':
             console.log("Search Song");
-            searchSong(search);
+            let song = search;
+            if(song === undefined) {
+                song = "The Sign"
+            }
+            searchSong(song);
             break;
 
         case 'movie-this':
@@ -47,14 +51,13 @@ function processCommand() {
             break;
 
         case 'do-what-it-says':
-            console.log("Execute File");
             executeFile();
             break;
     }
 }
 
 function searchConcert(artist) {
-    let combineArtist = artist.split(' ').join('+');
+    let combineArtist = artist.replace(/['"]+/g, '').split(' ').join('+');
 
     var queryUrl = "https://rest.bandsintown.com/artists/" + combineArtist + "/events?app_id=codingbootcamp";
 
@@ -80,7 +83,7 @@ function searchConcert(artist) {
 }
 
 function searchMovie(movie) {
-    let combinedMovie = movie.split(' ').join('+');
+    let combinedMovie = movie.replace(/['"]+/g, '').split(' ').join('+');
 
     var queryUrl = "http://www.omdbapi.com/?t=" + combinedMovie + "&y=&plot=short&apikey=trilogy";
 
@@ -122,19 +125,16 @@ function searchMovie(movie) {
 }
 
 function executeFile() {
-    //spotify-this-song,"I Want it That Way"
+
     fs.readFile('random.txt', 'utf8', function (err, data) {
         if (err) return console.log(err);
 
         const lines = data.trim().split('\n');
-        console.log(lines);
         
         for(const line of lines) {
             let result = line.split(',')
             command = result[0];
             search = result[1];
-            console.log(command);
-            console.log(search);
             processCommand();
         }
     });
