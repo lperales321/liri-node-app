@@ -30,3 +30,4 @@ node liri.js do-what-it-says
 The GIF below will show you how to execute the commands and the results that will be returned.
 
 ![](LIRI_BOT.gif)
+
